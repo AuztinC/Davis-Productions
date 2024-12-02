@@ -67,7 +67,7 @@ function Home() {
     client.queries.FlexApiFunction({API_STRING: apiString}).then(res=> {
       
       // const response: string = JSON.stringify(res.data);
-      setScanLog(JSON.parse(String(res.data)).content)
+      setScanLog(JSON.parse(String(res.data))?.content)
       
     }).catch(err=>console.log(err))
     
