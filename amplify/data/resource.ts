@@ -1,4 +1,5 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
+import { FlexApiFunction } from "../Flex_Api/resource";
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -12,6 +13,16 @@ const schema = a.schema({
       content: a.string(),
     })
     .authorization((allow) => [allow.publicApiKey()]),
+
+    
+  FlexApiFunction: a
+  .query()
+  .arguments({
+    API_STRING: a.string()
+  })
+  .returns( a.json() )
+  .handler(a.handler.function( FlexApiFunction ))
+  .authorization((allow)=>[allow.publicApiKey()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
@@ -22,7 +33,7 @@ export const data = defineData({
     defaultAuthorizationMode: "apiKey",
     // API Key is used for a.allow.public() rules
     apiKeyAuthorizationMode: {
-      expiresInDays: 30,
+      expiresInDays: 3,
     },
   },
 });
