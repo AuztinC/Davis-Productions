@@ -41,7 +41,7 @@ function WarehouseDashboard() {
     const apiString = '/element-list/row-data?definitionId=a220432c-af33-11df-b8d5-00e08175e43e&headerFieldTypeIds=name&headerFieldTypeIds=documentNumber&headerFieldTypeIds=personResponsibleId&headerFieldTypeIds=statusId&headerFieldTypeIds=calcStartDate&headerFieldTypeIds=calcEndDate&headerFieldTypeIds=locationId&headerFieldTypeIds=pickupLocationId&headerFieldTypeIds=returnLocationId&page=0&size=20&sort=calcStartDate%2Cdesc'
     client.queries.FlexApiFunction({API_STRING: apiString}).then(res=> {
       
-      const response = JSON.parse(String(res.data)).content
+      const response = JSON.parse(String(res.data))?.content
 
       // Sort by `calcStartDate` in ascending order
       response.sort((a:AwaitingPrep, b:AwaitingPrep) => {
