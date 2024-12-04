@@ -1,13 +1,9 @@
-// import { useEffect, useState } from "react";
-// import type { Schema } from "../amplify/data/resource";
-// import { generateClient } from "aws-amplify/data";
-// import Banner from "./Banner";
+import { useEffect, useState } from "react";
 import { Authenticator } from "@aws-amplify/ui-react";
+import { getCurrentUser } from "aws-amplify/auth";
 import outputs from '../amplify_outputs.json'
 import { Amplify } from "aws-amplify";
-// import { get } from 'aws-amplify/api';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
-
 import '@aws-amplify/ui-react/styles.css';
 import WarehouseDashboard from "./components/warehouse/WarehouseDashboard";
 import Home from "./components/Home";
@@ -15,24 +11,33 @@ import CustomerInformation from "./components/customers/CustomerInformation";
 
 Amplify.configure(outputs)
  
-// const client = generateClient<Schema>();
-
-
-
 
 function App() {
 
-  const currentLocation = useLocation()
+  const currentLocation = useLocation();
+  const [currentUser, setCurrentUser] = useState<String | undefined>('')
 
- 
+  useEffect(()=>{
+    callGetCurrentUser()
+  }, [])
+
+  async function callGetCurrentUser(){
+    const tempUser = await getCurrentUser();
+    const tempIdx = tempUser.signInDetails?.loginId?.indexOf('@')
+    const userName = tempUser.signInDetails?.loginId?.slice(0, tempIdx)
+    setCurrentUser(userName)
+  }
+  
+  
 
   return (
     <Authenticator>
-      {({ signOut, user }) => (
+      {({ signOut }) => (
       <>
       <div className="user-info">
-        <h5>User: {user?.signInDetails?.loginId}</h5> 
+        <h5>User: {currentUser}</h5> 
         <button onClick={signOut}>Sign out</button>
+        <button onClick={callGetCurrentUser}>getuser</button>
       </div>
       <main id="app">
         <div className="nav-logo-container"><img className="nav-logo" src="https://ssav.net/wp-content/uploads/2023/09/ssav-logo-lg-768x188.png" alt="logo" /><img className="nav-logo" src="https://mugwumpproductions.com/wp-content/uploads/2023/09/mw-logo-lg-600x137.png" alt="logo" /></div>

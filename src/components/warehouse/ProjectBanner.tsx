@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import '../../css/Banner.css'
 import { format, parseISO} from 'date-fns';
+import CategoryContentComponent from './CategoryContent';
 
 interface BannerProps { //Props coming into this component.
   client: Function;
-  project: AwaitingPrep
+  project: AwaitingPrep;
 }
 interface AwaitingPrep {
   id:string;
   displayName: string;
-  calcStartDate: string;
+  plannedStartDate: string;
 }
 interface CategoryId { //Definition of each category header (Audio, Lighting, etc)
   id: string;
   displayName: string;
+  groupQtyInfo: LineQtyInfo,
   isOpen: boolean;
 }
 interface CategoryLineItems { //Definition of each line item within a category
@@ -29,7 +31,7 @@ interface LineQtyInfo { //inner object describing completion of prep
 interface CategoryContent { // New Object containing parentLineItemId as id with related content || lineiteminfo
   id: string;
   displayName: string;
-  calcStartDate: string;
+  plannedStartDate: string;
   requiredScannedItems: number;
   currentScannedItems: number;
   content: CategoryLineItems[];
@@ -39,16 +41,11 @@ const Banner: React.FC<BannerProps> = ({ project, client }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [categoryIds, setCategoryIds] = useState<CategoryId[] | null >(null)
   const [categoryLineItems, setCategoryLineItems] = useState<CategoryContent[]>([])
+  const [projectPercent, setProjectPercent] = useState<Number>(0)
 
   const toggleOpen = () => {
     setIsOpen(!isOpen);
   };
-
-  // useEffect(()=>{
-  //   if(isOpen && !categoryIds){ //Load categoryIds on first dropdown.
-  //     getSingleCategoryIds(project.id) 
-  //   }
-  // }, [isOpen])
 
   useEffect(()=>{
     if(!categoryIds){ //Load categoryIds
@@ -56,46 +53,54 @@ const Banner: React.FC<BannerProps> = ({ project, client }) => {
     }
   }, [])
 
+  // useEffect(()=>{
+  //   console.log(projectPercent)
+  // }, [projectPercent])
+
+
   useEffect(()=>{
     if(categoryIds){
-      categoryIds.forEach((cat)=>{
+      let tempTotal = 0
+      let tempCurrent = 0
+      categoryIds.forEach((cat:CategoryId)=>{
+        // console.log(cat.groupQtyInfo)
+        tempTotal += cat?.groupQtyInfo?.requiredQty
+        tempCurrent += cat?.groupQtyInfo?.preppedQty
         const currentDate = new Date().getTime(); // Today's date in milliseconds
-        const fiveDaysFromNow = currentDate + 5 * 24 * 60 * 60 * 1000; // Add 5 days in milliseconds
+        const threeDaysFromNow = currentDate + 3 * 24 * 60 * 60 * 1000; // Add 5 days in milliseconds
         
-        const projectDate = new Date(project.calcStartDate).getTime();
+        const projectDate = new Date(project.plannedStartDate).getTime();
         
-        if (projectDate <= fiveDaysFromNow && projectDate >= currentDate - fiveDaysFromNow) {
+        if (projectDate <= threeDaysFromNow && projectDate >= currentDate - threeDaysFromNow) {
           // The project date is within 5 days from today
           getCategoryLineItems(project.id, cat.id)
           // console.log(project.displayName, "categoryIds", categoryIds)
         }
+        // console.log(cat.groupQtyInfo, tempTotal, tempCurrent)
       })
-    }
-    
+      if(tempTotal > 0){
+        let t = (tempCurrent / tempTotal) * 100
+        setProjectPercent(Number(t.toFixed(2)))
+      }
+    } 
   }, [categoryIds])
 
 
-
-  useEffect(()=>{
-    if(categoryLineItems){
-      console.log(project.displayName, "categoryLineItems", categoryLineItems, categoryIds)
-      console.log(project.id)
-    }
-  }, [categoryLineItems])
-
   function formatDateTime(inputString: string): string {
     const date = parseISO(inputString); // Parse the ISO string into a Date object
-    return format(date, 'MM/dd/yyyy hh:mm a'); // Format the date as "mm/dd/yyyy hh:mm am/pm"
+    if(inputString.slice(inputString.indexOf("T") + 1, inputString.indexOf("T") + 3) > "10"){
+      return format(date, 'MM/dd/yyyy h:mm a'); // Format the date as "mm/dd/yyyy hh:mm am/pm"
+    } else {
+      return format(date, 'MM/dd/yyyy hh:mm a');
+    }
   }
 
-  function getSingleCategoryIds(projectId:string) {
+  function getSingleCategoryIds(projectId:string) {  // Get all categories for a project, remove categories with only 0 qty lineItems
     const apiString = `/eqlist-line-item/nodes-by-ids?equipmentListId=${projectId}`
     client({API_STRING: apiString}).then((res: { data: any; })=> {
       const response = JSON.parse(String(res.data))
-      
-
-      setCategoryIds(response)
-
+      const filteredResponse = response.filter((res:any)=>res?.groupQtyInfo?.requiredQty > 0)
+      setCategoryIds(filteredResponse)
     }).catch((err: any)=>console.log(err))
   }
 
@@ -114,7 +119,7 @@ const Banner: React.FC<BannerProps> = ({ project, client }) => {
         acc.push({
           id: item.id,
           displayName: item.displayName,
-          calcStartDate: project.calcStartDate,
+          plannedStartDate: project.plannedStartDate,
           requiredScannedItems: 0,
           currentScannedItems: 0,
           content,
@@ -171,55 +176,30 @@ const Banner: React.FC<BannerProps> = ({ project, client }) => {
     }).catch((err: any)=>console.log(err))
   }
   
-  function toggleOpenCategory(category: CategoryId): void {
-    category.isOpen = !category.isOpen
-    throw new Error('Function not implemented.');
-  }
 
   return (
     <div className="banner">
-      <div className="banner-header" onClick={toggleOpen}>
-        <h3>{project.displayName}</h3>
-        <span className={`arrow ${isOpen ? 'open' : ''}`}>▼</span> 
+      <div className={`banner-header ${isOpen ? 'open-banner' : ''}`} onClick={toggleOpen}>
+        <h2>{project.displayName}</h2>
+        <div className="project-percent">
+          <div> {projectPercent.toString()}% </div>
+          {/* <br /> */}
+          <div className={`arrow ${isOpen ? 'open' : ''}`}> ▼ </div> 
+        </div>
       </div>
       {isOpen && 
         <div className="banner-content">
-          {formatDateTime(project.calcStartDate)}
+          {formatDateTime(project.plannedStartDate)}
+          {/* {project.plannedStartDate} */}
           <ul className="categoryIds">
           {categoryIds?.map((category, index) => (
-              <li key={index}>
-                {/* Display the category's display name */}
-                {category?.displayName}
-
-                {/* Button to load items for the category */}
-                <button onClick={() => getCategoryLineItems(project.id, category.id)}>Refresh Items</button>
-                <span onClick={() => toggleOpenCategory(category)} className={`arrow ${category.isOpen ? 'open' : ''}`}>▼</span> 
-
-                {/* Check if a matching categoryLineItem exists */}
-                { category.isOpen ?? categoryLineItems
-                  .filter((el: CategoryContent) => el.id === category.id) // Filter for matching items
-                  .map((el: CategoryContent) => (
-                    <ul key={el.id}>
-                      {/* Map through the content field of the matching categoryLineItem */}
-                      {el.content.map((c: CategoryLineItems, contentIndex) => (
-                        <li key={contentIndex}>
-                          {/* Replace `c.field` with actual properties from LineQtyInfo */}
-                          <h3>{c.displayName || "No data"}, Progress: {c.lineQtyInfo.preppedQty/c.lineQtyInfo.requiredQty*100}%</h3>
-                          <div>
-                            Required: {c.lineQtyInfo.requiredQty} <br />
-                            Prepped: {c.lineQtyInfo.preppedQty}
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  ))}
-              </li>
+              <CategoryContentComponent key={index} categoryLineItems={categoryLineItems} setCategoryLineItems={setCategoryLineItems} project={project} client={client} category={category} index={index} categoryIds={categoryIds} />
             ))}
           </ul>
 
         </div>}
     </div>
-  );
+  )
 };
 
 export default Banner;

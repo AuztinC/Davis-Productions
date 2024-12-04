@@ -1,0 +1,38 @@
+list of api /paths
+
+*/myApiPath =
+/flexApiPath
+
+
+/awaitingPrep = 
+/element-list/row-data?definitionId=a220432c-af33-11df-b8d5-00e08175e43e&headerFieldTypeIds=name&headerFieldTypeIds=documentNumber&headerFieldTypeIds=personResponsibleId&headerFieldTypeIds=statusId&headerFieldTypeIds=calcStartDate&headerFieldTypeIds=calcEndDate&headerFieldTypeIds=locationId&headerFieldTypeIds=pickupLocationId&headerFieldTypeIds=returnLocationId&page=0&size=20&sort=calcStartDate%2Cdesc
+
+/categoryIds(lineIds) =
+/eqlist-line-item/nodes-by-ids?equipmentListId=${projectId}
+
+/categoryLineItems
+//eqlist-line-item/node-list/${categoryId}?equipmentListId=${projectId}&page=0&size=20
+
+add table in back end for bugs, display for admins
+
+add auth : done
+access scanlog : done
+get all awaiting prep project : done
+auto check progress for awaitingPrep <= 5 days  : done
+create new user through auth : done (need to set up lambda trigger)
+10 items or less auto populate
+add notes for items, project also ?
+refresh to same hash
+cache 
+
+work out sms protocal
+link with lasso calenders to get users for project
+access Truck Driver information to alert for missing items
+
+create G page for 
+
+get customer information
+
+
+known bugs:
+

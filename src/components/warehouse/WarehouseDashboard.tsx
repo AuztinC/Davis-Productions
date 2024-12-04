@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import {  useEffect, useState } from "react";
 import type { Schema } from "../../../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 import Banner from "../warehouse/ProjectBanner";
@@ -19,43 +19,55 @@ const client = generateClient<Schema>();
 interface AwaitingPrep {
   id:string;
   displayName: string;
-  calcStartDate: string;
+  plannedStartDate: string;
   
 }
 
 
 function WarehouseDashboard() {
   const [awaitingPrep, setAwaitingPrep] = useState<AwaitingPrep[]>([])
+  const [groupedByDate, setGroupedByDate] = useState<Record<string, AwaitingPrep[]>>({})
+  const [startDate, setStartDate] = useState<string>(new Date( new Date().getTime() -2 * 24 * 60 * 60 * 1000).toISOString())
+  const [endDate, setEndDate] = useState<string>(new Date().toISOString())
+
+  useEffect(()=>{
+    if(awaitingPrep && awaitingPrep[0] != undefined){
+      const groupedEvents = groupByStartDate(awaitingPrep)
+      setGroupedByDate(groupedEvents)
+    }
+  }, [awaitingPrep])
+
+  useEffect(()=>{
+    setEndDate(getFutureDate(2)) 
+  }, [startDate])
   
-
-  // useEffect(()=>{
-  //   getAwaitingPrep()
-  // }, [])
-
+  function getFutureDate(days:number) {
+    const currentDate = new Date()
+    const futureDate = new Date(currentDate.getTime() + days * 24 * 60 * 60 * 1000)
+    return futureDate.toISOString()
+  }
+  
   function formatDateTime(inputString: string): string {
     const date = parseISO(inputString); // Parse the ISO string into a Date object
     return format(date, 'MM/dd/yyyy'); // Format the date as "mm/dd/yyyy hh:mm am/pm"
   }
 
-  function getAwaitingPrep() {
-    const apiString = '/element-list/row-data?definitionId=a220432c-af33-11df-b8d5-00e08175e43e&headerFieldTypeIds=name&headerFieldTypeIds=documentNumber&headerFieldTypeIds=personResponsibleId&headerFieldTypeIds=statusId&headerFieldTypeIds=calcStartDate&headerFieldTypeIds=calcEndDate&headerFieldTypeIds=locationId&headerFieldTypeIds=pickupLocationId&headerFieldTypeIds=returnLocationId&page=0&size=20&sort=calcStartDate%2Cdesc'
+  function getPullsheetCalender() {
+    const apiString = `/element-calendar/list-view-data?templateId=7b588c50-d66e-4f18-9d97-0f3317c3a3ac&startDate=${startDate}&endDate=${endDate}&calendarTokenFieldIds=client.name`
     client.queries.FlexApiFunction({API_STRING: apiString}).then(res=> {
       
-      const response = JSON.parse(String(res.data))?.content
-
-      // Sort by `calcStartDate` in ascending order
-      response.sort((a:AwaitingPrep, b:AwaitingPrep) => {
-        const dateA = new Date(a.calcStartDate).getTime();
-        const dateB = new Date(b.calcStartDate).getTime();
-        return dateA - dateB;
-      });
-      setAwaitingPrep(response)
-      // console.log(JSON.parse(String(res.data)).content)
+      const response = JSON.parse(String(res.data))
+      const updatedArray = response.reduce((acc:AwaitingPrep[], item:any)=>{
+        acc.push(item.children[0])
+        return acc
+      }, [])
+      setAwaitingPrep(updatedArray)
     }).catch(err=>console.log(err))
   }
+
   function groupByStartDate(events: AwaitingPrep[]): Record<string, AwaitingPrep[]> {
-    return events.reduce((acc, event) => {
-      const startDate = event.calcStartDate.slice(0, 10);
+    return events?.reduce((acc, event) => {
+      const startDate = event.plannedStartDate.slice(0, 10);
       if (!acc[startDate]) {
         acc[startDate] = [];
       }
@@ -64,28 +76,28 @@ function WarehouseDashboard() {
     }, {} as Record<string, AwaitingPrep[]>);
   }
 
-  const groupedEvents = groupByStartDate(awaitingPrep);
+  
 
   return (
-      <main className="warehouse-dashboard">
-        <button className="button refresh-pullsheets" onClick={getAwaitingPrep}>Refresh Pullsheets</button>
+    <main className="warehouse-dashboard">
+      {/* <button className="button refresh-pullsheets" onClick={getAwaitingPrep}>Refresh Pullsheets</button> */}
+      <button className="button refresh-pullsheets" onClick={getPullsheetCalender}>new tets</button>
+      
+      <div className="awaitingPrep-container">
+        {
+          Object.keys(groupedByDate)?.map((startDate, index) => {
+            return <div key={index}>
+              <h3 style={{textAlign: "center"}}>{formatDateTime(startDate)}</h3>
+              {groupedByDate[startDate]?.map((project, index) => (
+                <Banner key={index} client={client.queries.FlexApiFunction} project={project} />
+              ))}
+            </div>
+          })
+        }
         
-        <div className="awaitingPrep-container">
-          {
-            Object.keys(groupedEvents).map((startDate, index) => {
-              return <div key={index}>
-                {/* Display calcStartDate */}
-                <h4>{formatDateTime(startDate)}</h4>
-                {groupedEvents[startDate]?.map((project, index) => (
-                  <Banner key={index} client={client.queries.FlexApiFunction} project={project} />
-                ))}
-              </div>
-            })
-          }
-          
-        </div>
-        
-      </main>
+      </div>
+      
+    </main>
         
   );
 } 
