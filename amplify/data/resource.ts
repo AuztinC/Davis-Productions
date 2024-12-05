@@ -8,21 +8,24 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
-  Todo: a
+  AwaitingPrep: a
     .model({
-      content: a.string(),
+      id: a.string(),
+      displayName: a.string(),
+      plannedStartDate: a.string(),
+      lastUpdated: a.time()
     })
     .authorization((allow) => [allow.publicApiKey()]),
 
     
   FlexApiFunction: a
-  .query()
-  .arguments({
-    API_STRING: a.string()
-  })
-  .returns( a.json() )
-  .handler(a.handler.function( FlexApiFunction ))
-  .authorization((allow)=>[allow.publicApiKey()]),
+    .query()
+    .arguments({
+      API_STRING: a.string()
+    })
+    .returns( a.json() )
+    .handler(a.handler.function( FlexApiFunction ))
+    .authorization((allow)=>[allow.publicApiKey()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
