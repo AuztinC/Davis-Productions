@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import '../../css/Banner.css'
 // import { format, parseISO} from 'date-fns';
 
