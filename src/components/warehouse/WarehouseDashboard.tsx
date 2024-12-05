@@ -27,9 +27,12 @@ interface AwaitingPrep {
 function WarehouseDashboard() {
   const [awaitingPrep, setAwaitingPrep] = useState<AwaitingPrep[]>([])
   const [groupedByDate, setGroupedByDate] = useState<Record<string, AwaitingPrep[]>>({})
-  const [startDate, setStartDate] = useState<string>(new Date( new Date().getTime() -2 * 24 * 60 * 60 * 1000).toISOString())
+  const [startDate, setStartDate] = useState<string>()
   const [endDate, setEndDate] = useState<string>(new Date().toISOString())
 
+  useEffect(()=>{
+    setStartDate(new Date( new Date().getTime() -2 * 24 * 60 * 60 * 1000).toISOString())
+  }, [])
   useEffect(()=>{
     if(awaitingPrep && awaitingPrep[0] != undefined){
       const groupedEvents = groupByStartDate(awaitingPrep)

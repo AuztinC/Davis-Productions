@@ -62,7 +62,6 @@ const CategoryContentComponent: React.FC<CategoryContentProps> = ({ categoryLine
   
     return categoryIds.reduce<CategoryContent[]>((acc, category) => {
       // Filter responseArray to find elements matching the current category id
-      // const content = responseArray.filter(el => el.parentLineItemId === category.id);
       const content = responseArray.filter(el => el.parentLineItemId === category.id);
       
       
@@ -131,17 +130,17 @@ const CategoryContentComponent: React.FC<CategoryContentProps> = ({ categoryLine
     <li key={index}>
       {/* Display the category's display name */}
       <div ref={ scrollTo } className='category-content-header' onClick={toggleOpen}>
-          <span className={`arrow ${isOpen ? 'open' : ''}`}>▼</span>
-          <h4 style={{display: "inline"}}>
-              {category?.displayName}
-          </h4>
+        <span className={`arrow ${isOpen ? 'open' : ''}`}>▼</span>
+        <h4 style={{display: "inline"}}>
+            {category?.displayName}
+        </h4>
 
-          <div>
-          {/* Button to load items for the category */}
-            <button onClick={() => getCategoryLineItems(project.id, category.id)}>
-                <img className='project-category-refresh' src="src\assets\refresh-svgrepo-com.svg" alt="refresh" />
-            </button>
-          </div>
+        <div>
+        {/* Button to load items for the category */}
+          <button onClick={() => getCategoryLineItems(project.id, category.id)}>
+              <img className='project-category-refresh' src="src\assets\refresh-svgrepo-com.svg" alt="refresh" />
+          </button>
+        </div>
       </div>
 
       {/* Check if a matching categoryLineItem exists */}
@@ -152,7 +151,6 @@ const CategoryContentComponent: React.FC<CategoryContentProps> = ({ categoryLine
               {/* Map through the content field of the matching categoryLineItem */}
               {el.content.map((c: CategoryLineItems, contentIndex) => (
               <li key={contentIndex}>
-                  {/* Replace `c.field` with actual properties from LineQtyInfo */}
                   <h3>{c.displayName || "No data"}<br/> Progress: {c.lineQtyInfo.preppedQty/c.lineQtyInfo.requiredQty*100}%</h3>
                   <div>
                   Required: {c.lineQtyInfo.requiredQty} <br />
