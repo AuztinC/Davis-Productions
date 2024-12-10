@@ -47,7 +47,7 @@ function App() {
         </div>
           <Routes>
             <Route path="/"  element={<Home />}/>
-            <Route path="warehouse"  element={<WarehouseDashboard currentUser={ currentUser }/>}/>
+            <Route path="warehouse"  element={<WarehouseDashboard />}/>
             <Route path="customerInfo"  element={<CustomerInformation />}/>
           </Routes>
 
