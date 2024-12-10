@@ -37,7 +37,6 @@ function App() {
       <div className="user-info">
         <h5>User: {currentUser}</h5> 
         <button onClick={signOut}>Sign out</button>
-        <button onClick={callGetCurrentUser}>getuser</button>
       </div>
       <main id="app">
         <div className="nav-logo-container"><img className="nav-logo" src="https://ssav.net/wp-content/uploads/2023/09/ssav-logo-lg-768x188.png" alt="logo" /><img className="nav-logo" src="https://mugwumpproductions.com/wp-content/uploads/2023/09/mw-logo-lg-600x137.png" alt="logo" /></div>
@@ -48,7 +47,7 @@ function App() {
         </div>
           <Routes>
             <Route path="/"  element={<Home />}/>
-            <Route path="warehouse"  element={<WarehouseDashboard />}/>
+            <Route path="warehouse"  element={<WarehouseDashboard currentUser={ currentUser }/>}/>
             <Route path="customerInfo"  element={<CustomerInformation />}/>
           </Routes>
 

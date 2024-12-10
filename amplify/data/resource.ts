@@ -10,7 +10,7 @@ specifies that any user authenticated via an API key can "create", "read",
 const schema = a.schema({
   AwaitingPrep: a
     .model({
-      id: a.string(),
+      id: a.string().required(),
       displayName: a.string(),
       plannedStartDate: a.string(),
       lastUpdated: a.time()
@@ -36,7 +36,7 @@ export const data = defineData({
     defaultAuthorizationMode: "apiKey",
     // API Key is used for a.allow.public() rules
     apiKeyAuthorizationMode: {
-      expiresInDays: 3,
+      expiresInDays: 30,
     },
   },
 });

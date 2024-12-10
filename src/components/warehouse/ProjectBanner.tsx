@@ -99,7 +99,7 @@ const Banner: React.FC<BannerProps> = ({ project, client }) => {
     const apiString = `/eqlist-line-item/nodes-by-ids?equipmentListId=${projectId}`
     client({API_STRING: apiString}).then((res: { data: any; })=> {
       const response = JSON.parse(String(res.data))
-      const filteredResponse = response.filter((res:any)=>res?.groupQtyInfo?.requiredQty > 0)
+      const filteredResponse = response?.filter((res:any)=>res?.groupQtyInfo?.requiredQty > 0)
       setCategoryIds(filteredResponse)
     }).catch((err: any)=>console.log(err))
   }

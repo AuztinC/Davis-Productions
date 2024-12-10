@@ -65,6 +65,7 @@ function Home() {
   function getScanLog() {
     const apiString = '/scan-log/scan-history?page=0&size=20&sort=scanDate%2Cdesc'
     client.queries.FlexApiFunction({API_STRING: apiString}).then(res=> {
+      console.log(res)
       
       // const response: string = JSON.stringify(res.data);
       setScanLog(JSON.parse(String(res.data))?.content)
