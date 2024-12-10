@@ -5,8 +5,6 @@ import axios from 'axios';
 export const handler: Handler = async (event, context) => {
   // your function code goes here
   const { API_STRING } = event.arguments
-  console.log("EVENT", event)
-  console.log(env)
   
   const request = await axios.get(env.API_ENDPOINT + API_STRING, {
     headers: {
