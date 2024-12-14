@@ -23,6 +23,7 @@ interface AwaitingPrep {
   
 }
 
+// const { data: name } = await client.models.AwaitingPrep.list()
 
 function WarehouseDashboard() {
   const [awaitingPrep, setAwaitingPrep] = useState<AwaitingPrep[]>([])
@@ -43,6 +44,7 @@ function WarehouseDashboard() {
   useEffect(()=>{
     // console.log(startDate)
     setEndDate(getFutureDate(2)) 
+
   }, [startDate])
   
   function getFutureDate(days:number) {
@@ -59,7 +61,6 @@ function WarehouseDashboard() {
   function getPullsheetCalender() {
     const apiString = `/element-calendar/list-view-data?templateId=7b588c50-d66e-4f18-9d97-0f3317c3a3ac&startDate=${startDate}&endDate=${endDate}&calendarTokenFieldIds=client.name`
     client.queries.FlexApiFunction({API_STRING: apiString}).then(res=> {
-      console.log(res)
       const response = JSON.parse(String(res.data))
       const updatedArray = response.reduce((acc:AwaitingPrep[], item:any)=>{
         acc.push(item.children[0])
@@ -81,16 +82,20 @@ function WarehouseDashboard() {
   }
 
   async function NewAwaitingPrep(project:AwaitingPrep) {
-    
-    await client.models.AwaitingPrep.create({
-      id: project.id,
-      displayName: project.displayName,
-      plannedStartDate: project.plannedStartDate,
-      lastUpdated: new Date().toDateString()
-    })
+    try {
+      await client.models.AwaitingPrep.create({
+        id: project.id,
+        displayName: project.displayName,
+        plannedStartDate: project.plannedStartDate
+      })
+      console.log('sent to db')
+    } catch (error) {
+      console.log(error)
+    }
   }
   async function GetAwaitingPrep() {
     const response = await client.models.AwaitingPrep.list()
+    // const response = await client.models.AwaitingPrep.onCreate()
     console.log(response)
   }
 
@@ -99,7 +104,7 @@ function WarehouseDashboard() {
       {/* <button className="button refresh-pullsheets" onClick={getAwaitingPrep}>Refresh Pullsheets</button> */}
       <button className="button refresh-pullsheets" onClick={getPullsheetCalender}>new tets</button>
       
-      <button className="button refresh-pullsheets" onClick={()=>NewAwaitingPrep(awaitingPrep[0])}>add project to db</button>
+      <button className="button refresh-pullsheets" onClick={()=>NewAwaitingPrep(awaitingPrep[1])}>add project to db</button>
       <button className="button refresh-pullsheets" onClick={GetAwaitingPrep}>check table</button>
       <div className="awaitingPrep-container">
         {

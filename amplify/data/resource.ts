@@ -11,9 +11,28 @@ const schema = a.schema({
   AwaitingPrep: a
     .model({
       id: a.string().required(),
-      displayName: a.string(),
+      displayName: a.string().required(),
       plannedStartDate: a.string(),
-      lastUpdated: a.time()
+      categories: a.string().array()
+    })
+    .authorization((allow) => [allow.publicApiKey()]),
+
+    Category: a
+    .model({
+      id: a.string().required(), // Unique identifier
+      projectId: a.string().required(), // Associated Project ID
+      name: a.string().required(), // Category name
+      lineItems: a.string().array(), // List of Line Item IDs
+    })
+    .authorization((allow) => [allow.publicApiKey()]),
+
+  LineItem: a
+    .model({
+      id: a.string().required(), // Unique identifier
+      categoryId: a.string().required(), // Associated Category ID
+      description: a.string().required(), // Item description
+      quantity: a.integer().required(), // Quantity
+      price: a.float().required(), // Price
     })
     .authorization((allow) => [allow.publicApiKey()]),
 

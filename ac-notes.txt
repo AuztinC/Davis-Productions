@@ -13,26 +13,55 @@ list of api /paths
 /categoryLineItems
 //eqlist-line-item/node-list/${categoryId}?equipmentListId=${projectId}&page=0&size=20
 
-add table in back end for bugs, display for admins
 
+ 
+/* // THOUGHTS //  
+any changing(PUT, POST, DELETE) will be direct to FLEX.
+GET calls will check cached information in the DB for updatedAt - within 10? minutes hold info.
+have direct refresh buttons attached to items for user to update between cache if needed
+
+user sign up -> first lambda(preSignUp) attaches user email to approve user lambda API link. Included in email.
+*/
+
+/// Database
+create tables for WAREHOUSE : AwaitingPrep projects and their children.
+
+
+/// GENERAL
+add submit bug front end
+add table in back end for bugs, display for admins
 add auth : done
+acces username : done
 access scanlog : done
+create new user through auth : done (need to set up lambda trigger)
+// user sign up => lambda fn to email/text admid links for approve/deny. 
+lambda for approve / lambda for deny -- pass user info from link ? //
+cache 
+user userpools to display pages ?
+
+//// USER
+settings ->
+  change password
+access Truck Driver information to alert for missing items
+work out sms protocal
+link with lasso calenders to get users for project : ->
+  (emailed lasso team; need to respond with company lasso admin cc)
+  
+
+//// WAREHOUSE 
 get all awaiting prep project : done
 auto check progress for awaitingPrep <= 5 days  : done
-create new user through auth : done (need to set up lambda trigger)
 10 items or less auto populate
 add notes for items, project also ?
-refresh to same hash
-cache 
 
-work out sms protocal
-link with lasso calenders to get users for project
-access Truck Driver information to alert for missing items
+/// PM PAGES
+create G page for epix strips : ->
+  push to G alerts when found as item on pullsheet(showName, date, strip info.)
 
-create G page for 
 
+/// CUSTOMER INFORMATION
 get customer information
 
 
-known bugs:
+known bugs: 
 
