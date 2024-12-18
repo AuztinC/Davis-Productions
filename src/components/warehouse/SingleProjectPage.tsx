@@ -6,35 +6,35 @@ import { useParams } from 'react-router-dom';
 interface SingleProjectPage { //Props coming into this component.
     client: any;
   }
-  interface AwaitingPrep {
-    id:string;
-    displayName: string;
-    plannedStartDate: string;
-  }
-  interface CategoryId { //Definition of each category header (Audio, Lighting, etc)
-    id: string;
-    displayName: string;
-    groupQtyInfo: LineQtyInfo,
-    isOpen: boolean;
-  }
-  interface CategoryLineItems { //Definition of each line item within a category
-    id: string;
-    parentLineItemId: string;
-    displayName: string;
-    lineQtyInfo: LineQtyInfo;
-  }
-  interface LineQtyInfo { //inner object describing completion of prep
-    requiredQty: number;
-    preppedQty: number;
-  }
-  interface CategoryContent { // New Object containing parentLineItemId as id with related content || lineiteminfo
-    id: string;
-    displayName: string;
-    plannedStartDate: string;
-    requiredScannedItems: number;
-    currentScannedItems: number;
-    content: CategoryLineItems[];
-  }
+//   interface AwaitingPrep {
+//     id:string;
+//     displayName: string;
+//     plannedStartDate: string;
+//   }
+//   interface CategoryId { //Definition of each category header (Audio, Lighting, etc)
+//     id: string;
+//     displayName: string;
+//     groupQtyInfo: LineQtyInfo,
+//     isOpen: boolean;
+//   }
+//   interface CategoryLineItems { //Definition of each line item within a category
+//     id: string;
+//     parentLineItemId: string;
+//     displayName: string;
+//     lineQtyInfo: LineQtyInfo;
+//   }
+//   interface LineQtyInfo { //inner object describing completion of prep
+//     requiredQty: number;
+//     preppedQty: number;
+//   }
+//   interface CategoryContent { // New Object containing parentLineItemId as id with related content || lineiteminfo
+//     id: string;
+//     displayName: string;
+//     plannedStartDate: string;
+//     requiredScannedItems: number;
+//     currentScannedItems: number;
+//     content: CategoryLineItems[];
+//   }
 
 const SingleProjectPage: React.FC<SingleProjectPage> = ({client}) => {
   const { id } = useParams<{ id: string }>();
