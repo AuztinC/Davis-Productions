@@ -34,6 +34,7 @@ const WarehouseDashboard: React.FC<WarehouseDashboard>=({client}) =>{
   useEffect(()=>{
     setStartDate(new Date( new Date().getTime() -2 * 24 * 60 * 60 * 1000).toISOString())
   }, [])
+  
   useEffect(()=>{
     if(awaitingPrep && awaitingPrep[0] != undefined){
       const groupedEvents = groupByStartDate(awaitingPrep)
