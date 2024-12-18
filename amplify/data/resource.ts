@@ -1,5 +1,6 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 import { FlexApiFunction } from "../Flex_Api/resource";
+import { adminConfirmUser } from "../auth/adminConfirmUser/resource";
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -36,7 +37,16 @@ const schema = a.schema({
     })
     .authorization((allow) => [allow.publicApiKey()]),
 
-    
+  adminConfirmUser: a
+    .query()
+    .arguments({
+      username: a.string()
+    })
+    .returns( a.json() )
+    .handler(a.handler.function( adminConfirmUser ))
+    .authorization((allow)=>[allow.publicApiKey()]),
+
+
   FlexApiFunction: a
     .query()
     .arguments({

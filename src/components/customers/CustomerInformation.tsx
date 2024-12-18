@@ -1,9 +1,12 @@
 // import React from "react";
 
+interface CustomerInformation {
+    client: any
+}
 
-const CustomerInformation = ()=>{
+const CustomerInformation: React.FC<CustomerInformation> = ({client})=>{
 
-
+    console.log(client)
     return (
         <main>
             <h1>Coming soon</h1>

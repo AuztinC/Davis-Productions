@@ -3,17 +3,20 @@ import { Authenticator } from "@aws-amplify/ui-react";
 import { getCurrentUser } from "aws-amplify/auth";
 import outputs from '../amplify_outputs.json'
 import { Amplify } from "aws-amplify";
+import type { Schema } from "../amplify/data/resource";
+import { generateClient } from "aws-amplify/data";
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import '@aws-amplify/ui-react/styles.css';
 import WarehouseDashboard from "./components/warehouse/WarehouseDashboard";
 import Home from "./components/Home";
 import CustomerInformation from "./components/customers/CustomerInformation";
+import SingleProjectPage from "./components/warehouse/SingleProjectPage";
 
 Amplify.configure(outputs)
  
 
 function App() {
-
+  const client = generateClient<Schema>();
   const currentLocation = useLocation();
   const [currentUser, setCurrentUser] = useState<String | undefined>('')
 
@@ -46,9 +49,10 @@ function App() {
           <Link className={ currentLocation.pathname == '/customerInfo' ? 'current-nav' : ''} to='/customerInfo'>Customers</Link>
         </div>
           <Routes>
-            <Route path="/"  element={<Home />}/>
-            <Route path="warehouse"  element={<WarehouseDashboard />}/>
-            <Route path="customerInfo"  element={<CustomerInformation />}/>
+            <Route path="/"  element={<Home client={client}/>}/>
+            <Route path="warehouse"  element={<WarehouseDashboard client={client}/>}/>
+            <Route path="warehouse/:id"  element={<SingleProjectPage client={client} />}/>
+            <Route path="customerInfo"  element={<CustomerInformation client={client}/>}/>
           </Routes>
 
       </main>

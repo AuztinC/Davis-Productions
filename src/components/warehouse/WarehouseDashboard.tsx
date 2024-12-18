@@ -1,6 +1,4 @@
 import {  useEffect, useState } from "react";
-import type { Schema } from "../../../amplify/data/resource";
-import { generateClient } from "aws-amplify/data";
 import Banner from "../warehouse/ProjectBanner";
 import { format, parseISO} from 'date-fns';
 // import { Authenticator } from "@aws-amplify/ui-react";
@@ -13,7 +11,9 @@ import '@aws-amplify/ui-react/styles.css';
 
 Amplify.configure(outputs)
  
-const client = generateClient<Schema>();
+interface WarehouseDashboard {
+  client: any
+}
 
 
 interface AwaitingPrep {
@@ -25,7 +25,7 @@ interface AwaitingPrep {
 
 // const { data: name } = await client.models.AwaitingPrep.list()
 
-function WarehouseDashboard() {
+const WarehouseDashboard: React.FC<WarehouseDashboard>=({client}) =>{
   const [awaitingPrep, setAwaitingPrep] = useState<AwaitingPrep[]>([])
   const [groupedByDate, setGroupedByDate] = useState<Record<string, AwaitingPrep[]>>({})
   const [startDate, setStartDate] = useState<string>()
@@ -60,14 +60,14 @@ function WarehouseDashboard() {
 
   function getPullsheetCalender() {
     const apiString = `/element-calendar/list-view-data?templateId=7b588c50-d66e-4f18-9d97-0f3317c3a3ac&startDate=${startDate}&endDate=${endDate}&calendarTokenFieldIds=client.name`
-    client.queries.FlexApiFunction({API_STRING: apiString}).then(res=> {
+    client.queries.FlexApiFunction({API_STRING: apiString}).then((res: { data: any; })=> {
       const response = JSON.parse(String(res.data))
       const updatedArray = response.reduce((acc:AwaitingPrep[], item:any)=>{
         acc.push(item.children[0])
         return acc
       }, [])
       setAwaitingPrep(updatedArray)
-    }).catch(err=>console.log(err))
+    }).catch((err: any)=>console.log(err))
   }
 
   function groupByStartDate(events: AwaitingPrep[]): Record<string, AwaitingPrep[]> {

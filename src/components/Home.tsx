@@ -1,39 +1,24 @@
-import { useState } from "react";
-import type { Schema } from "../../amplify/data/resource";
-import { generateClient } from "aws-amplify/data";
+import React, { useState } from "react";
+
 // import Banner from "./Banner";
 // import { Authenticator } from "@aws-amplify/ui-react";
-import outputs from '../../amplify_outputs.json'
-import { Amplify } from "aws-amplify";
+// import outputs from '../../amplify_outputs.json'
+// import { Amplify } from "aws-amplify";
 // import { get } from 'aws-amplify/api';
 import { format, parseISO} from 'date-fns';
 
 import '@aws-amplify/ui-react/styles.css';
 
-Amplify.configure(outputs)
+// Amplify.configure(outputs)
 
 interface Scan {
-  barcode
-: 
-"12769"
-contactAssetFacility
-: 
-null
-contactAssetId
-: 
-null
-elementId
-: 
-"478e7e06-2b66-4e03-a121-e049ec1df6b8"
-id
-: 
-"fd251ce8-64f3-4b52-a534-da69c3124d04"
-itemName
-: 
-"Jingle Bell - Large - Gold"
-locationId
-: 
-"2f49c62c-b139-11df-b8d5-00e08175e43e"
+barcode: "12769"
+contactAssetFacility: null
+contactAssetId: null
+elementId: "478e7e06-2b66-4e03-a121-e049ec1df6b8"
+id: "fd251ce8-64f3-4b52-a534-da69c3124d04"
+itemName: "Jingle Bell - Large - Gold"
+locationId: "2f49c62c-b139-11df-b8d5-00e08175e43e"
 locationName: "SSAV"
 modelId: "e6aca368-9d21-4719-8fc7-a0dc248d24c9"
 quantity: 4
@@ -47,11 +32,13 @@ userId: string
 userName: string
 }
 
-const client = generateClient<Schema>();
+interface Home {
+  client: any
+}
 
 
-
-function Home() {
+// const SingleProjectPage: React.FC<SingleProjectPage> = ({client}) =>
+const Home: React.FC<Home> = ({client}) => {
   const [scanLog, setScanLog] = useState([])
 
   // useEffect(()=>{
@@ -64,13 +51,13 @@ function Home() {
   }
   function getScanLog() {
     const apiString = '/scan-log/scan-history?page=0&size=20&sort=scanDate%2Cdesc'
-    client.queries.FlexApiFunction({API_STRING: apiString}).then(res=> {
+    client.queries.FlexApiFunction({API_STRING: apiString}).then((res: { data: any; })=> {
       console.log(res)
       
       // const response: string = JSON.stringify(res.data);
       setScanLog(JSON.parse(String(res.data))?.content)
       
-    }).catch(err=>console.log(err))
+    }).catch((err: any)=>console.log(err))
     
   }
 
