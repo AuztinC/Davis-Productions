@@ -50,9 +50,9 @@ function App() {
         </div>
           <Routes>
             <Route path="/"  element={<Home client={client}/>}/>
-            <Route path="warehouse"  element={<WarehouseDashboard client={client}/>}/>
-            <Route path="warehouse/:id"  element={<SingleProjectPage client={client} />}/>
-            <Route path="customerInfo"  element={<CustomerInformation client={client}/>}/>
+            <Route path="warehouse"  element={<WarehouseDashboard />}/>
+            <Route path="warehouse/:id"  element={<SingleProjectPage />}/>
+            <Route path="customerInfo"  element={<CustomerInformation />}/>
           </Routes>
 
       </main>

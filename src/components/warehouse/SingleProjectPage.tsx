@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import client from '../../resources/Client';
 // import { awaitingPrep } from './mockData'; // Mock data for example
 // import { sendSMS } from './api'; // API function for Lambda
 
-interface SingleProjectPage { //Props coming into this component.
-    client: any;
-  }
+
 //   interface AwaitingPrep {
 //     id:string;
 //     displayName: string;
@@ -36,7 +35,7 @@ interface SingleProjectPage { //Props coming into this component.
 //     content: CategoryLineItems[];
 //   }
 
-const SingleProjectPage: React.FC<SingleProjectPage> = ({client}) => {
+const SingleProjectPage: React.FC= () => {
   const { id } = useParams<{ id: string }>();
 //   const project = awaitingPrep.find((item) => item.id === id);
 
@@ -62,7 +61,7 @@ const SingleProjectPage: React.FC<SingleProjectPage> = ({client}) => {
     }
   };
 
-  async function GetAwaitingPrep() {
+  async function GetAwaitingPrepProject() {
     const response = await client.models.AwaitingPrep.get({
         id: `${id}`
     })
@@ -135,7 +134,7 @@ const SingleProjectPage: React.FC<SingleProjectPage> = ({client}) => {
             style={{ width: '100%', padding: '10px', marginBottom: '10px', height: '100px' }}
           ></textarea>
           <button
-            onClick={GetAwaitingPrep}
+            onClick={GetAwaitingPrepProject}
             style={{ padding: '10px 20px', backgroundColor: 'blue', color: 'white', border: 'none', cursor: 'pointer' }}
           >
             Send SMS

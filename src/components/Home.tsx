@@ -50,19 +50,51 @@ const Home: React.FC<Home> = ({client}) => {
   function getFlexScanLog() {
     const apiString = '/scan-log/scan-history?page=0&size=20&sort=scanDate%2Cdesc'
     client.queries.FlexApiFunction({API_STRING: apiString}).then((res: { data: any; })=> {
-      console.log(res)
+      // console.log(res)
       
       // const response: string = JSON.stringify(res.data);
-      setScanLog(JSON.parse(String(res.data))?.content)
+      // setScanLog(JSON.parse(String(res.data))?.content)
+
+
+      // Parse the API response data
+      const apiData = JSON.parse(String(res.data))?.content;
+
+      // Fetch existing DB records
+      client.models.ScanItem.list()
+        .then((dbResponse: { data: any; }) => {
+          const dbData = dbResponse.data;
+          console.log(dbData)
+
+          // Filter items that are not already in the database
+          const newItems = apiData.filter((apiItem: any) =>
+            !dbData.some((dbItem: any) => dbItem.id === apiItem.id) // Compare by unique identifier
+          );
+
+          console.log('New Items:', newItems);
+
+          // Add new items to the database
+          newItems.forEach((newItem: any) => {
+            client.models.ScanItem.create(newItem)
+              .then(() => console.log('Item added:', newItem))
+              .catch((err: any) => console.error('Error adding item:', err));
+          });
+        })
+        .catch((err: any) => console.error('Error fetching DB data:', err));
+    })
+    .catch((err: any) => console.error('Error fetching API data:', err));
       
-    }).catch((err: any)=>console.log(err))
     
   }
 
   async function getDBScanLog() {
     try {
       const response = await client.models.ScanItem.list()
-      console.log(response)
+      if(response.data && response.data.length === 0) {
+        console.log(response)
+        // getFlexScanLog()
+      } else {
+        setScanLog(response.data)
+      }
     } catch (error) {
       console.log(error)
     }
@@ -73,7 +105,7 @@ const Home: React.FC<Home> = ({client}) => {
         <h1>Home</h1>
         
         <button onClick={getFlexScanLog}>call flex</button>
-        <button onClick={getDBScanLog}>call flex</button>
+        <button onClick={getDBScanLog}>call DB</button>
 
         {scanLog ? 
         <ul>

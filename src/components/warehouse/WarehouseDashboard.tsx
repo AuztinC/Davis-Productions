@@ -1,19 +1,13 @@
 import {  useEffect, useState } from "react";
 import Banner from "../warehouse/ProjectBanner";
 import { format, parseISO} from 'date-fns';
-// import { Authenticator } from "@aws-amplify/ui-react";
 import outputs from '../../../amplify_outputs.json'
 import { Amplify } from "aws-amplify";
-// import { get } from 'aws-amplify/api';
-// import { HashRouter, Routes, Route, useNavigate } from 'react-router-dom';
-
 import '@aws-amplify/ui-react/styles.css';
+import client from "../../resources/Client";
 
 Amplify.configure(outputs)
  
-interface WarehouseDashboard {
-  client: any
-}
 
 
 interface AwaitingPrep {
@@ -25,7 +19,7 @@ interface AwaitingPrep {
 
 // const { data: name } = await client.models.AwaitingPrep.list()
 
-const WarehouseDashboard: React.FC<WarehouseDashboard>=({client}) =>{
+const WarehouseDashboard: React.FC=() =>{
   const [awaitingPrep, setAwaitingPrep] = useState<AwaitingPrep[]>([])
   const [groupedByDate, setGroupedByDate] = useState<Record<string, AwaitingPrep[]>>({})
   const [startDate, setStartDate] = useState<string>()

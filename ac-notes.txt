@@ -64,4 +64,9 @@ get customer information
 
 
 known bugs: 
+CAUSE: running sandbox
+EFFECT: disconnect from IAM role? not allowing backend calls.
+RESOLUTON: re deploy project, DL backend resources and replace in project.
+
+
 
