@@ -34,7 +34,7 @@ const WarehouseDashboard: React.FC<WarehouseDashboard>=({client}) =>{
   useEffect(()=>{
     setStartDate(new Date( new Date().getTime() -2 * 24 * 60 * 60 * 1000).toISOString())
   }, [])
-  
+
   useEffect(()=>{
     if(awaitingPrep && awaitingPrep[0] != undefined){
       const groupedEvents = groupByStartDate(awaitingPrep)
@@ -44,7 +44,7 @@ const WarehouseDashboard: React.FC<WarehouseDashboard>=({client}) =>{
 
   useEffect(()=>{
     // console.log(startDate)
-    setEndDate(getFutureDate(2)) 
+    setEndDate(getFutureDate(7)) // # of days to look ahead5
 
   }, [startDate])
   
@@ -63,6 +63,7 @@ const WarehouseDashboard: React.FC<WarehouseDashboard>=({client}) =>{
     const apiString = `/element-calendar/list-view-data?templateId=7b588c50-d66e-4f18-9d97-0f3317c3a3ac&startDate=${startDate}&endDate=${endDate}&calendarTokenFieldIds=client.name`
     client.queries.FlexApiFunction({API_STRING: apiString}).then((res: { data: any; })=> {
       const response = JSON.parse(String(res.data))
+      console.log(response)
       const updatedArray = response.reduce((acc:AwaitingPrep[], item:any)=>{
         acc.push(item.children[0])
         return acc

@@ -9,6 +9,25 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
+  ScanItem: a
+  .model({
+    id: a.string().required(),
+    scanDate: a.string(),
+    barcode: a.string(),
+    scanMode: a.string(),
+    referenceId: a.string(),
+    referenceName: a.string(),
+    userName: a.string(),
+    scanSource: a.string(),
+    quantity: a.integer(),
+    userId: a.string(),
+    itemName: a.string(),
+    modelId: a.string(),
+    elementId: a.string(),
+    scanModelDisplayString: a.string()
+  })
+    .authorization((allow)=>[allow.publicApiKey()]),
+
   AwaitingPrep: a
     .model({
       id: a.string().required(),
@@ -37,24 +56,27 @@ const schema = a.schema({
     })
     .authorization((allow) => [allow.publicApiKey()]),
 
-  adminConfirmUser: a
-    .query()
-    .arguments({
-      username: a.string()
-    })
-    .returns( a.json() )
-    .handler(a.handler.function( adminConfirmUser ))
-    .authorization((allow)=>[allow.publicApiKey()]),
 
+// ---- QUERIES ---- //
+adminConfirmUser: a // SEND EMAIL TO ADMIN AFTER USER SIGN UP
+.query()
+.arguments({
+  username: a.string()
+})
+.returns( a.json() )
+.handler(a.handler.function( adminConfirmUser ))
+.authorization((allow)=>[allow.publicApiKey()]),
 
-  FlexApiFunction: a
-    .query()
-    .arguments({
-      API_STRING: a.string()
-    })
-    .returns( a.json() )
-    .handler(a.handler.function( FlexApiFunction ))
-    .authorization((allow)=>[allow.publicApiKey()]),
+FlexApiFunction: a
+.query()
+.arguments({
+  API_STRING: a.string()
+})
+.returns( a.json() )
+.handler(a.handler.function( FlexApiFunction ))
+.authorization((allow)=>[allow.publicApiKey()]),
+// ---- END QUERIES ---- //
+
 });
 
 export type Schema = ClientSchema<typeof schema>;

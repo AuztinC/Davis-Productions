@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../../css/Banner.css'
 import { format, parseISO} from 'date-fns';
 import CategoryContentComponent from './CategoryContent';
+import { Link } from 'react-router-dom';
 
 interface BannerProps { //Props coming into this component.
   client: Function;
@@ -179,6 +180,7 @@ const Banner: React.FC<BannerProps> = ({ project, client }) => {
 
   return (
     <div className="banner">
+      <Link to={`/warehouse/${project.id}`}> Project Information </Link>
       <div className={`banner-header ${isOpen ? 'open-banner' : ''}`} onClick={toggleOpen}>
         <h2>{project.displayName}</h2>
         <div className="project-percent">
