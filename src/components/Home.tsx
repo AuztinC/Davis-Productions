@@ -50,31 +50,40 @@ const Home: React.FC<Home> = ({client}) => {
   function getFlexScanLog() {
     const apiString = '/scan-log/scan-history?page=0&size=20&sort=scanDate%2Cdesc'
     client.queries.FlexApiFunction({API_STRING: apiString}).then((res: { data: any; })=> {
-      // console.log(res)
-      
-      // const response: string = JSON.stringify(res.data);
-      // setScanLog(JSON.parse(String(res.data))?.content)
-
 
       // Parse the API response data
       const apiData = JSON.parse(String(res.data))?.content;
-
       // Fetch existing DB records
       client.models.ScanItem.list()
         .then((dbResponse: { data: any; }) => {
           const dbData = dbResponse.data;
-          console.log(dbData)
 
           // Filter items that are not already in the database
-          const newItems = apiData.filter((apiItem: any) =>
-            !dbData.some((dbItem: any) => dbItem.id === apiItem.id) // Compare by unique identifier
+          const newItems = apiData.filter((apiItem: Scan) =>
+            !dbData.some((dbItem: Scan) => dbItem.id === apiItem.id) // Compare by unique identifier
           );
 
-          console.log('New Items:', newItems);
-
           // Add new items to the database
-          newItems.forEach((newItem: any) => {
-            client.models.ScanItem.create(newItem)
+          newItems.forEach((newItem: Scan) => {
+            client.models.ScanItem.create({
+              barcode: newItem.barcode,
+              elementId: newItem.elementId,
+              id: newItem.id,
+              itemName: newItem.itemName,
+              locationId: newItem.locationId,
+              locationName: newItem.locationName,
+              modelId: newItem.modelId,
+              quantity: newItem.quantity,
+              referenceId: newItem.referenceId,
+              referenceName: newItem.referenceName,
+              scanDate: newItem.scanDate,
+              scanMode: newItem.scanMode,
+              scanModeDisplayString: newItem.scanModeDisplayString,
+              scanSource: newItem.scanSource,
+              userId: newItem.userId,
+              userName: newItem.userName
+
+            })
               .then(() => console.log('Item added:', newItem))
               .catch((err: any) => console.error('Error adding item:', err));
           });
@@ -90,10 +99,11 @@ const Home: React.FC<Home> = ({client}) => {
     try {
       const response = await client.models.ScanItem.list()
       if(response.data && response.data.length === 0) {
-        console.log(response)
+        console.log(response) 
         // getFlexScanLog()
       } else {
-        setScanLog(response.data)
+        console.log(response)
+        // setScanLog(response.data)
       }
     } catch (error) {
       console.log(error)
