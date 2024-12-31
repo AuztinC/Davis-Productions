@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import isMoreThanTenMinutesAgo from "../resources/TenMinuteCheck";
 
 // import Banner from "./Banner";
 // import { Authenticator } from "@aws-amplify/ui-react";
@@ -39,31 +40,26 @@ interface Home {
 const Home: React.FC<Home> = ({client}) => {
   const [scanLog, setScanLog] = useState<Scan[]>([])
 
-  // useEffect(()=>{
-  //   console.log(scanLog)
-  // }, [scanLog])
+  useEffect(()=>{
+    getDBScanLog()
+  }, [])
 
   function formatDateTime(inputString: string): string {
     const date = parseISO(inputString); // Parse the ISO string into a Date object
     return format(date, 'MM/dd/yyyy h:mm a'); // Format the date as "mm/dd/yyyy hh:mm am/pm"
   }
-  function getFlexScanLog() {
+  function getFlexScanLog(dbResponse: Scan[]) {
     const apiString = '/scan-log/scan-history?page=0&size=20&sort=scanDate%2Cdesc'
     client.queries.FlexApiFunction({API_STRING: apiString}).then((res: { data: any; })=> {
 
       // Parse the API response data
       const apiData = JSON.parse(String(res.data))?.content;
-      // Fetch existing DB records
-      client.models.ScanItem.list()
-        .then((dbResponse: { data: any; }) => {
-          const dbData = dbResponse.data;
-          console.log(dbData)
 
           // Filter items that are not already in the database
           const newItems = apiData.filter((apiItem: Scan) =>
-            !dbData.some((dbItem: Scan) => dbItem.id === apiItem.id) // Compare by unique identifier
+            !dbResponse.some((dbItem: Scan) => dbItem.id === apiItem.id) // Compare by unique identifier
           );
-
+          
           // Add new items to the database
           newItems.forEach((newItem: Scan) => {
             client.models.ScanItem.create({
@@ -83,13 +79,11 @@ const Home: React.FC<Home> = ({client}) => {
               userName: newItem.userName
 
             })
-              .then(() => console.log('Item added:', newItem))
+              .then(() => console.log('Item added:', newItem), setScanLog(prev=>[...prev, newItem]))
               .catch((err: any) => console.error('Error adding item:', err));
               
           });
           
-        })
-        .catch((err: any) => console.error('Error fetching DB data:', err));
     })
     .catch((err: any) => console.error('Error fetching API data:', err));
       
@@ -100,8 +94,10 @@ const Home: React.FC<Home> = ({client}) => {
     try {
       const response = await client.models.ScanItem.list()
       console.log(response) 
+      // I want to check if 10 minutes updated. but the updated time is not accurate?
+      // const moreThanTenMinutesAgo = isMoreThanTenMinutesAgo(response.data[0]?.updatedAt)
       if(response.data && response.data.length === 0) {
-        getFlexScanLog()
+        getFlexScanLog(response.data)
       } else {
         setScanLog(response.data)
       }
@@ -113,11 +109,10 @@ const Home: React.FC<Home> = ({client}) => {
   return (
       <main>
         <h1>Home</h1>
-        
-        <button onClick={getFlexScanLog}>call flex</button>
-        <button onClick={getDBScanLog}>call DB</button>
+        <button onClick={getDBScanLog}>Refresh DB</button>
+        <br />
 
-        {scanLog ? 
+        {scanLog.length > 0 ? 
         <ul>
           {scanLog.map((scan:Scan, index)=>
             <li key={index}>
