@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import isMoreThanTenMinutesAgo from "../resources/TenMinuteCheck";
+// import isMoreThanTenMinutesAgo from "../resources/TenMinuteCheck";
 
 // import Banner from "./Banner";
 // import { Authenticator } from "@aws-amplify/ui-react";
