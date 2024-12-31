@@ -57,6 +57,7 @@ const Home: React.FC<Home> = ({client}) => {
       client.models.ScanItem.list()
         .then((dbResponse: { data: any; }) => {
           const dbData = dbResponse.data;
+          console.log(dbData)
 
           // Filter items that are not already in the database
           const newItems = apiData.filter((apiItem: Scan) =>
@@ -66,12 +67,10 @@ const Home: React.FC<Home> = ({client}) => {
           // Add new items to the database
           newItems.forEach((newItem: Scan) => {
             client.models.ScanItem.create({
+              id: newItem.id,
               barcode: newItem.barcode,
               elementId: newItem.elementId,
-              id: newItem.id,
               itemName: newItem.itemName,
-              locationId: newItem.locationId,
-              locationName: newItem.locationName,
               modelId: newItem.modelId,
               quantity: newItem.quantity,
               referenceId: newItem.referenceId,
@@ -86,9 +85,7 @@ const Home: React.FC<Home> = ({client}) => {
             })
               .then(() => console.log('Item added:', newItem))
               .catch((err: any) => console.error('Error adding item:', err));
-              if(scanLog && scanLog.length > 0){
-                setScanLog(prev=>[...prev, newItems])
-              }
+              
           });
           
         })
@@ -102,11 +99,10 @@ const Home: React.FC<Home> = ({client}) => {
   async function getDBScanLog() {
     try {
       const response = await client.models.ScanItem.list()
+      console.log(response) 
       if(response.data && response.data.length === 0) {
-        console.log(response) 
-        // getFlexScanLog()
+        getFlexScanLog()
       } else {
-        console.log(response)
         // setScanLog(response.data)
       }
     } catch (error) {

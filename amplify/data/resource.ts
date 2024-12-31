@@ -24,7 +24,7 @@ const schema = a.schema({
     itemName: a.string(),
     modelId: a.string(),
     elementId: a.string(),
-    scanModelDisplayString: a.string()
+    scanModeDisplayString: a.string()
   })
     .authorization((allow)=>[allow.publicApiKey()]),
 
