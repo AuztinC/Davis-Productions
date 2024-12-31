@@ -37,7 +37,7 @@ interface Home {
 
 // const SingleProjectPage: React.FC<SingleProjectPage> = ({client}) =>
 const Home: React.FC<Home> = ({client}) => {
-  const [scanLog, setScanLog] = useState([])
+  const [scanLog, setScanLog] = useState<Scan[]>([])
 
   // useEffect(()=>{
   //   console.log(scanLog)
@@ -86,7 +86,11 @@ const Home: React.FC<Home> = ({client}) => {
             })
               .then(() => console.log('Item added:', newItem))
               .catch((err: any) => console.error('Error adding item:', err));
+              if(scanLog && scanLog.length > 0){
+                setScanLog(prev=>[...prev, newItems])
+              }
           });
+          
         })
         .catch((err: any) => console.error('Error fetching DB data:', err));
     })
