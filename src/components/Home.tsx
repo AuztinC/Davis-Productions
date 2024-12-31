@@ -103,7 +103,7 @@ const Home: React.FC<Home> = ({client}) => {
       if(response.data && response.data.length === 0) {
         getFlexScanLog()
       } else {
-        // setScanLog(response.data)
+        setScanLog(response.data)
       }
     } catch (error) {
       console.log(error)
