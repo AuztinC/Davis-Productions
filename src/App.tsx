@@ -49,7 +49,7 @@ function App() {
           <Link className={ currentLocation.pathname == '/customerInfo' ? 'current-nav' : ''} to='/customerInfo'>Customers</Link>
         </div>
           <Routes>
-            <Route path="/"  element={<Home client={client}/>}/>
+            <Route path="/"  element={<Home />}/>
             <Route path="warehouse"  element={<WarehouseDashboard />}/>
             <Route path="warehouse/:id"  element={<SingleProjectPage />}/>
             <Route path="customerInfo"  element={<CustomerInformation />}/>

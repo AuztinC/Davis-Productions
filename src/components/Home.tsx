@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 // import isMoreThanTenMinutesAgo from "../resources/TenMinuteCheck";
-
-// import Banner from "./Banner";
-// import { Authenticator } from "@aws-amplify/ui-react";
-// import outputs from '../../amplify_outputs.json'
-// import { Amplify } from "aws-amplify";
-// import { get } from 'aws-amplify/api';
+import client from "../resources/Client";
 import { format, parseISO} from 'date-fns';
 
 import '@aws-amplify/ui-react/styles.css';
@@ -31,14 +26,9 @@ userId: string
 userName: string
 }
 
-interface Home {
-  client: any
-}
-
-
 // const SingleProjectPage: React.FC<SingleProjectPage> = ({client}) =>
-const Home: React.FC<Home> = ({client}) => {
-  const [scanLog, setScanLog] = useState<Scan[]>([])
+const Home: React.FC = () => {
+  const [scanLog, setScanLog] = useState<any[]>([])
 
   useEffect(()=>{
     getDBScanLog()
@@ -48,7 +38,7 @@ const Home: React.FC<Home> = ({client}) => {
     const date = parseISO(inputString); // Parse the ISO string into a Date object
     return format(date, 'MM/dd/yyyy h:mm a'); // Format the date as "mm/dd/yyyy hh:mm am/pm"
   }
-  function getFlexScanLog(dbResponse: Scan[]) {
+  function getFlexScanLog(dbResponse: any) {
     const apiString = '/scan-log/scan-history?page=0&size=20&sort=scanDate%2Cdesc'
     client.queries.FlexApiFunction({API_STRING: apiString}).then((res: { data: any; })=> {
 
@@ -79,21 +69,19 @@ const Home: React.FC<Home> = ({client}) => {
               userName: newItem.userName
 
             })
-              .then(() => console.log('Item added:', newItem), setScanLog(prev=>[...prev, newItem]))
+              .then(() => {console.log('Item added:', newItem), setScanLog(prev=>[...prev, newItem])})
               .catch((err: any) => console.error('Error adding item:', err));
               
           });
           
     })
     .catch((err: any) => console.error('Error fetching API data:', err));
-      
-    
   }
 
   async function getDBScanLog() {
     try {
       const response = await client.models.ScanItem.list()
-      console.log(response) 
+      // console.log(response) 
       // I want to check if 10 minutes updated. but the updated time is not accurate?
       // const moreThanTenMinutesAgo = isMoreThanTenMinutesAgo(response.data[0]?.updatedAt)
       if(response.data && response.data.length === 0) {
@@ -107,10 +95,9 @@ const Home: React.FC<Home> = ({client}) => {
   }
 
   return (
-      <main>
-        <h1>Home</h1>
-        <button onClick={getDBScanLog}>Refresh DB</button>
-        <br />
+      <main className="homeBody">
+        <button onClick={getDBScanLog}>Refresh Scanlog</button>
+        {/* <br /> */}
 
         {scanLog.length > 0 ? 
         <ul>
